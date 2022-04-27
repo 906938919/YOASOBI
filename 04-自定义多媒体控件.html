@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>たぶん-YOASOBI</title>
+  <link rel="stylesheet" href="./iconfont/iconfont.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .media {
+      width: 800px;
+      height: 50px;
+      border: 3px solid #bbb;
+      margin: 300px auto;
+    }
+
+    .media>div {
+      float: left;
+      line-height: 50px;
+      margin: 0 10px;
+    }
+
+    .media>div.playRange {
+      width: 200px;
+      height: 6px;
+      background-color: #333;
+      margin: 22px 10px;
+      border-radius: 3px;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .media>div.playRange .currentRange {
+      /* width: 100px; */
+      width: 0px;
+      height: 6px;
+      background-color: rgb(9, 143, 153);
+      position: absolute;
+      left: 0;
+      top: 0;
+      /* pointer-events: none; */
+    }
+
+    .media>div.playRange .playBtn {
+      width: 20px;
+      height: 20px;
+      background-color: rgb(9, 143, 153);
+      border-radius: 50%;
+      position: absolute;
+      /* left: 90px; */
+      left: 0px;
+      top: -7px;
+      /* 设置元素的鼠标事件穿透 */
+      pointer-events: none;
+    }
+
+    .media .volume {
+      position: relative;
+    }
+
+    .media .volumeRange {
+      width: 4px;
+      height: 100px;
+      background-color: #333;
+      border-radius: 2px;
+      position: absolute;
+      top: -100px;
+      left: 10px;
+      display: none;
+    }
+
+    .media .volumeRange .currentVolume {
+      width: 4px;
+      height: 50px;
+      background-color: blue;
+      border-radius: 2px;
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      pointer-events: none;
+    }
+
+    .media .volumeRange .volumeBtn {
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background-color: blue;
+      position: absolute;
+      left: -5px;
+      bottom: 40px;
+      /* 设置元素的鼠标事件穿透 */
+      pointer-events: none;
+    }
+
+    .media i {
+      font-size: 24px;
+    }
+
+    .lyrics {
+      position: relative;
+      width: 330px;
+      height: 50px;
+      background-color: pink;
+      overflow: hidden;
+    }
+
+    .lyrics>ul {
+      width: 100%;
+      box-sizing: border-box;
+      position: absolute;
+      top: 0;
+      padding: 0 10px 0;
+      transition: all 0.3s linear;
+    }
+
+    .lyrics>ul>li {
+      height: 25px;
+      line-height: 25px;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- <audio src="./陈奕迅-孤勇者.mp3"></audio> -->
+  <audio src="./YOASOBI - たぶん.mp3" loop></audio>
+  <!-- 多媒体空间 -->
+  <div class="media">
+    <!-- 播放暂停按钮 -->
+    <div class="playOrPause">
+      <i class="iconfont icon-play"></i>
+    </div>
+    <!-- 播放事件 -->
+    <div class="time">
+      <span class="currentMinute">00</span>
+      :
+      <span class="currentSecond">00</span>
+      /
+      <span class="durationMinute">00</span>
+      :
+      <span class="durationSecond">00</span>
+    </div>
+    <!-- 播放进度条 -->
+    <div class="playRange">
+      <div class="currentRange"></div>
+      <div class="playBtn"></div>
+    </div>
+    <!-- 声音控件 -->
+    <div class="volume">
+      <!-- 声音大小控制 -->
+      <div class="volumeRange">
+        <div class="currentVolume"></div>
+        <div class="volumeBtn"></div>
+      </div>
+      <!-- 声音按钮 -->
+      <i class="iconfont icon-sound-on"></i>
+    </div>
+    <div class="lyrics">
+      <ul>
+        <li>1</li>
+      </ul>
+    </div>
+  </div>
+</body>
+
+</html>
+<script>
+  let lrc = `
+  [00:00.555] たぶん-YOASOBI
+  [00:00.555]
+  [00:01.187] 作词 : Ayase
+  [00:01.187] 作曲 : Ayase
+  [00:02.187]涙流すことすら無いまま
+  [00:02.187]就连流泪这种事都不会再有了
+  [00:02.187]
+  [00:07.437]過ごした⽇々の痕⼀つも残さずに
+  [00:07.437]过去的日子连一道痕迹都没有留下
+  [00:07.437]
+  [00:16.805]さよならだ
+  [00:16.805]永别了
+  [00:16.805]
+  [00:23.438]⼀⼈で迎えた朝に
+  [00:23.438]我独自一人迎接清晨
+  [00:23.438]
+  [00:26.411]鳴り響く誰かの⾳
+  [00:26.411]（耳边）响起的究竟是谁的声音
+  [00:26.411]
+  [00:28.961]⼆⼈で過ごした部屋で
+  [00:28.961]在你我二人曾经一起住过的屋子里
+  [00:28.961]
+  [00:31.594]⽬を閉じたまま考えてた
+  [00:31.594]就这样紧闭双眼思考着
+  [00:31.594]
+  [00:34.360]悪いのは誰だ
+  [00:34.360]究竟是谁的错
+  [00:34.360]
+  [00:38.394]分かんないよ
+  [00:38.394]我不知道啊
+  [00:38.394]
+  [00:39.827]誰のせいでもない
+  [00:39.827]谁都没有错吧   大概...
+  [00:39.827]
+  [00:43.394]たぶん
+  [00:43.394]大概...
+  [00:43.394]
+  [00:44.227]僕らは何回だってきっと
+  [00:44.227]不管我们经历多少次都一定会...
+  [00:44.227]
+  [00:47.210]そう何年だってきっと
+  [00:47.210]不管经历多少年都一定会...
+  [00:47.210]
+  [00:50.127]さよならと共に終わるだけなんだ
+  [00:50.127]用告别这种方式来结束一切吧
+  [00:50.127]
+  [00:55.427]仕⽅がないよきっと
+  [00:55.427]这真的是没有办法的啊...
+  [00:55.427]
+  [00:57.928]"おかえり"
+  [00:57.928]“欢迎回家”
+  [00:57.928]
+  [00:58.877]思わず零れた⾔葉は
+  [00:58.877]这不经意间说出的零星话语...
+  [00:58.877]
+  [01:03.027]違うな
+  [01:03.027]还是说错了啊
+  [01:03.027]
+  [01:14.260]⼀⼈で迎えた朝に
+  [01:14.260]独自一人迎接清晨
+  [01:14.260]
+  [01:16.944]ふと想う誰かのこと
+  [01:16.944]突然间想到的是谁
+  [01:16.944]
+  [01:19.610]⼆⼈で過ごした⽇々の
+  [01:19.610]你我二人曾一起经历的日子
+  [01:19.610]
+  [01:22.260]当たり前がまだ残っている
+  [01:22.260]理所当然地还残留（在记忆中啊）
+  [01:22.260]
+  [01:25.027]悪いのは君だ
+  [01:25.027]错的是你啊
+  [01:25.027]
+  [01:29.111]そうだっけ
+  [01:29.111]是这样吗？
+  [01:29.111]
+  [01:30.295]悪いのは僕だ
+  [01:30.295]错的是我吧
+  [01:30.295]
+  [01:34.278]たぶん
+  [01:34.278]大概...
+  [01:34.278]
+  [01:35.495]これも⼤衆的恋愛でしょ
+  [01:35.495]这也算是一场大众恋爱吧
+  [01:35.495]
+  [01:38.295]それは最終的な答えだよ
+  [01:38.295]这就是（我）最终的回答哟
+  [01:38.295]
+  [01:40.578]僕らだんだんとズレていったの
+  [01:40.578]我们渐渐偏离了正轨
+  [01:40.578]
+  [01:43.311]それもただよくある聴き慣れたストーリーだ
+  [01:43.311]这...也就是一个常有的耳熟能详的故事罢了
+  [01:43.311]
+  [01:46.995]あんなに輝いていた⽇々にすら
+  [01:46.995]即便是那些曾经无比灿烂的日子
+  [01:46.995]
+  [01:51.456]埃は積もっていくんだ
+  [01:51.456]也会被尘埃渐渐笼罩啊
+  [01:51.456]
+  [01:55.697]僕らは何回だってきっと
+  [01:55.697]不管我们经历多少次都一定会...
+  [01:55.697]
+  [01:59.447]そう何年だってきっと
+  [01:59.447]是的，不管经历多少年...
+  [01:59.447]
+  [02:02.030]さよならに続く道を歩くんだ
+  [02:02.030]这通向离别的道路都会成为我们的归宿吧。
+  [02:02.030]
+  [02:07.382]仕⽅がないよきっと
+  [02:07.382]这真的是没有办法的啊
+  [02:07.382]
+  [02:09.796]"おかえり"
+  [02:09.796]“欢迎回家”
+  [02:09.796]
+  [02:11.063]いつもの様に
+  [02:11.063]一如既往地
+  [02:11.063]
+  [02:13.663]零れ落ちた
+  [02:13.663]脱口而出了
+  [02:13.663]
+  [02:34.396]分かり合えないことなんてさ
+  [02:34.396]不能相互理解的事情
+  [02:34.396]
+  [02:36.781]幾らでもあるんだきっと
+  [02:36.781]必定...比比皆是啊
+  [02:36.781]
+  [02:39.097]全てを許し合えるわけじゃないから
+  [02:39.097]并不是原谅这所有的一切
+  [02:39.097]
+  [02:44.663]ただ優しさの⽇々を
+  [02:44.663]只是，如果连温柔的日子
+  [02:44.663]
+  [02:47.047]⾟い⽇々と感じてしまったのなら
+  [02:47.047]都会感觉到痛苦的话
+  [02:47.047]
+  [02:51.031]戻れないから
+  [02:51.031]就再也回不去了啊
+  [02:51.031]
+  [02:57.619]僕らは何回だってきっと
+  [02:57.619]不管我们经历多少次都一定会...
+  [02:57.619]
+  [03:00.320]僕らは何回だってきっと
+  [03:00.320]不管我们经历多少次都一定会...
+  [03:00.320]
+  [03:03.388]そう何年だってきっと
+  [03:03.388]是的，不管经历多少年都一定会...
+  [03:03.388]
+  [03:05.903]さよならと共に終わるだけなんだ
+  [03:05.903]用告别这种方式来结束一切吧
+  [03:05.903]
+  [03:11.320]仕⽅がないよきっと
+  [03:11.320]这真的是没有办法的啊
+  [03:11.320]
+  [03:14.006]"おかえり"
+  [03:14.006]“欢迎回家”
+  [03:14.006]
+  [03:14.888]思わず零れた⾔葉は
+  [03:14.888]这不经意间说出的零星话语...
+  [03:14.888]
+  [03:18.902]違うな
+  [03:18.902]还是说错了啊
+  [03:18.902]
+  [03:21.051]それでも何回だってきっと
+  [03:21.051]就算如此，无论经历多少次都一定会...
+  [03:21.051]
+  [03:24.387]そう何年だってきっと
+  [03:24.387]是的，无论经历多少年都一定会...
+  [03:24.387]
+  [03:27.152]始まりに戻ることが出来たなら
+  [03:27.152]重新开始的吧
+  [03:27.152]
+  [03:32.668]なんて思ってしまうよ
+  [03:32.668]我会...这么想吧
+  [03:32.668]
+  [03:35.387]"おかえり"
+  [03:35.387]“欢迎回家”
+  [03:35.387]
+  [03:36.268]届かず零れた⾔葉に
+  [03:36.268]这传达不到的零星话语
+  [03:36.268]
+  [03:40.268]笑った
+  [03:40.268]那曾经的欢笑
+  [03:40.268]
+  [03:42.768]少し冷えた朝だ
+  [03:42.768]还有这稍显冷清的早上
+  [03:42.768]
+  `
+</script>
+<script src="./jquery.js"></script>
+
+
+<!-- 事件绑定 -->
+<script>
+  // 多媒体标签
+  let media = $('audio')[0];
+  let t = 0;
+  // 鼠标移入移除控制 声音空间的显示
+  $('.volume').mouseenter(function () {
+    $(this).find('.volumeRange').show();
+    clearTimeout(t);
+  }).mouseleave(function () {
+    t = setTimeout(function () {
+      $('.volume').find('.volumeRange').hide();
+    }, 800)
+  })
+
+  // $('.volume').hover(function () {
+  //   $(this).find('.volumeRange').show();
+  // }, function () {
+  //   $(this).find('.volumeRange').hide();
+  // });
+
+  // 点击播放暂停按钮
+  $('.playOrPause').click(function () {
+    if ($(this).find('i').hasClass('icon-play')) {
+      media.play();
+      $(this).find('i').removeClass('icon-play').addClass('icon-pause');
+    } else {
+      media.pause();
+      $(this).find('i').removeClass('icon-pause').addClass('icon-play');
+    }
+  });
+  // 获取并渲染总时长
+  media.oncanplay = function () {
+    let durMin = parseInt(this.duration / 60);
+    let dursec = parseInt(this.duration % 60);
+    $('.durationMinute').text(durMin < 10 ? '0' + durMin : durMin);
+    $('.durationSecond').text(dursec < 10 ? '0' + dursec : dursec);
+  }
+
+
+  // 播放时间设置
+  media.ontimeupdate = function () {
+    // 当前的播放时间
+    let durMin = parseInt(this.currentTime / 60);
+    let dursec = parseInt(this.currentTime % 60);
+    durMin = durMin < 10 ? '0' + durMin : durMin;
+    dursec = dursec < 10 ? '0' + dursec : dursec;
+    $('.currentMinute').text(durMin);
+    $('.currentSecond').text(dursec);
+
+    let w = $('.playRange').width() * this.currentTime / this.duration;
+
+    $('.currentRange').css('width', w);
+    $('.playBtn').css('left', w);
+
+
+    let time = `${durMin}:${dursec}`;
+    let index = timeArr.findIndex(item => item === time);
+    if (index === -1) return;
+    // 根据获取的index 来调整ul的top值
+    $('.lyrics>ul').css('top', (-index * 25) + 'px');
+  }
+
+
+
+
+  // 拖拽播放进度条
+  $('.playRange').mousedown(function (e) {
+    // 获取鼠标按下相对于playRange左侧的距离
+    let x = e.offsetX;
+    $('.currentRange').css('width', x);
+    $('.playBtn').css('left', x - $('.playBtn').width() / 2);
+    // 播放
+    media.play();
+    $('.playOrPause i').removeClass('icon-play').addClass('icon-pause');
+    // 修改时间
+    // x/$('.playRange').width() === 当前时间/总时间
+    let percent = x / $(this).width();
+    let currTime = parseInt(media.duration * percent);
+    // 将当前播放的时间设置给多媒体标签
+    media.currentTime = currTime;
+    $('.playRange')[0].onmousemove = function (e) {
+      let x = e.offsetX;
+      $('.currentRange').css('width', x);
+      $('.playBtn').css('left', x - $('.playBtn').width() / 2);
+      let percent = x / $(this).width();
+
+      let currTime = parseInt(media.duration * percent);
+      media.currentTime = currTime;
+
+    }
+
+    return false;
+  })
+  $(document).mouseup(function () {
+    $('.playRange')[0].onmousemove = null;
+    $('.volumeRange')[0].onmousemove = null;
+  })
+
+  // 点击静音
+  $('.volume i').click(function () {
+    if ($(this).hasClass('icon-sound-on')) {
+      // 静音
+      media.muted = true;
+      $(this).removeClass('icon-sound-on').addClass('icon-sound-off');
+      $('.currentVolume').css('height', 0);
+      $('.volumeBtn').css('bottom', -7);
+    } else {
+      media.muted = false;
+      $(this).removeClass('icon-sound-off').addClass('icon-sound-on');
+      $('.currentVolume').css('height', 50);
+      $('.volumeBtn').css('bottom', 43);
+      media.volume = 0.5;
+    }
+  })
+
+  $('.volumeRange').mousedown(function (e) {
+    let y = e.offsetY;
+    $('.currentVolume').css('height', $(this).height() - y);
+    $('.volumeBtn').css('top', y - $('.volumeBtn').height() / 2)
+    media.volume = ($(this).height() - y) / $(this).height();
+    $('.volumeRange')[0].onmousemove = function (e) {
+      let y = e.offsetY;
+      $('.currentVolume').css('height', $(this).height() - y);
+      $('.volumeBtn').css('top', y - $('.volumeBtn').height() / 2)
+      media.volume = ($(this).height() - y) / $(this).height();
+    };
+    return false;
+  })
+
+
+</script>
+
+<!-- 歌词滚动 -->
+<script>
+  let lrcArr = [];
+  let timeArr = [];
+  let reg = /\[(\d{2}:\d{2})\.\d{3}\](.*)/;
+  lrc.split('\n').forEach(item => {
+    let res = reg.exec(item);
+
+    if (!res) return;
+    // 把时间放到 timeArr 歌词放到lrcArr
+    timeArr.push(res[1])
+    lrcArr.push(res[2])
+  })
+  $('.lyrics>ul').html(function () {
+    return lrcArr.reduce((prev, item, index) => prev + `<li>${item}</li>`, '')
+  })
+
+</script>
